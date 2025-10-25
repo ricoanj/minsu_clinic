@@ -1,0 +1,1 @@
+# minsu_clinic
