@@ -1,0 +1,47 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+      {{> sidebar-admin }}
+      <main class="main-shift flex-1 bg-white p-6 rounded border">
+        <h1 class="text-2xl font-bold">Notifications</h1>
+        <p class="mt-2 text-gray-600">Recent alerts and system messages.</p>
+
+        <div class="mt-6 bg-white rounded shadow p-4">
+          <h2 class="text-sm text-gray-600 mb-3">Audit Logs (most recent first)</h2>
+          {{#if notifications}}
+          <div class="overflow-x-auto">
+            <table id="logs-table" class="w-full datatable">
+              <thead>
+                <tr>
+                  <th class="border p-2">Timestamp</th>
+                  <th class="border p-2">Actor</th>
+                  <th class="border p-2">Action</th>
+                  <th class="border p-2">Target</th>
+                  <th class="border p-2">Message</th>
+                  <th class="border p-2">Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                {{#each notifications}}
+                <tr>
+                  <td class="border p-2 text-xs text-gray-600">{{this.createdAt}}</td>
+                  <td class="border p-2">{{#if this.actor}}{{this.actor.name}}{{else}}System{{/if}}</td>
+                  <td class="border p-2">{{this.action}}</td>
+                  <td class="border p-2">{{#if this.target}}{{this.target.name}}{{else}}-{{/if}}</td>
+                  <td class="border p-2">{{this.message}}</td>
+                  <td class="border p-2 text-xs text-gray-600">{{this.detailsStr}}</td>
+                </tr>
+                {{/each}}
+              </tbody>
+            </table>
+          </div>
+          {{else}}
+          <div class="p-6 text-center text-gray-600">No logs available.</div>
+          {{/if}}
+        </div>
+
+      </main>
+    </div>
+  </div>
+{{> footer }}{{> footer-extras }}

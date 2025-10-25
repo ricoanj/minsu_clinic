@@ -1,0 +1,97 @@
+{{> head}}
+
+<main class="main-shift">
+  <div class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Request Medicine</h1>
+    <p class="text-sm text-gray-600 mb-4">Select the medicine and quantity you'd like to request. Staff will review and fulfill the request.</p>
+
+    <!-- inline messages (server flash or client-side) -->
+    <div id="form-messages">
+      {{#if success_msg}}
+        {{#each success_msg}}
+          <div class="flash-success p-3 mb-4 rounded bg-green-50 text-green-800">{{this}}</div>
+        {{/each}}
+      {{/if}}
+      {{#if error_msg}}
+        {{#each error_msg}}
+          <div class="flash-error p-3 mb-4 rounded bg-red-50 text-red-800">{{this}}</div>
+        {{/each}}
+      {{/if}}
+    </div>
+
+  <form id="handout-form" action="/handouts/new" method="post" class="bg-white p-4 rounded shadow space-y-4">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Medicine</label>
+      <select name="medicineId" class="mt-1 block w-full border-gray-200 rounded p-2" required>
+        <option value="">-- Select medicine --</option>
+        {{#each meds}}
+          <option value="{{this.id}}">{{this.name}} ({{this.stock}} in stock)</option>
+        {{/each}}
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Quantity</label>
+      <input type="number" name="quantity" min="1" value="1" class="mt-1 block w-32 border-gray-200 rounded p-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Notes (optional)</label>
+      <textarea name="notes" rows="3" class="mt-1 block w-full border-gray-200 rounded p-2"></textarea>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <a href="/user/handouts" class="text-sm text-gray-600">Back</a>
+      <button id="handout-submit" type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Send request</button>
+    </div>
+    </form>
+  </div>
+</main>
+
+<script>
+  // Client-side submit fallback: send via fetch and handle JSON response so page doesn't need to rely on redirect-follow behavior
+  document.addEventListener('DOMContentLoaded', function(){
+    const form = document.getElementById('handout-form');
+    if (!form) return;
+    form.addEventListener('submit', function(e){
+      try {
+        // allow normal submit when javascript disabled — but if JS active, handle via fetch to get clean UX
+        e.preventDefault();
+        const btn = document.getElementById('handout-submit');
+        if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+        const formData = new FormData(form);
+        const payload = Object.fromEntries(formData.entries());
+        fetch(form.action, {
+          method: 'POST',
+          credentials: 'same-origin',
+          headers: { 'Accept': 'application/json', 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        }).then(r => {
+          if (!r.ok) return r.json().then(j => Promise.reject(j));
+          return r.json();
+        }).then(json => {
+          const msgs = document.getElementById('form-messages');
+          if (json && json.redirect) {
+            // show success message briefly then redirect
+            if (msgs) {
+              msgs.innerHTML = '<div class="p-3 mb-4 rounded bg-green-50 text-green-800">' + (json.message || 'Request sent') + '</div>';
+            }
+            setTimeout(() => { window.location.href = json.redirect; }, 800);
+            return;
+          }
+          // fallback reload
+          window.location.reload();
+        }).catch(err => {
+          try {
+            const msgs = document.getElementById('form-messages');
+            const msgText = (err && err.error) ? err.error : 'Failed to send request';
+            if (msgs) {
+              msgs.innerHTML = '<div class="p-3 mb-4 rounded bg-red-50 text-red-800">' + msgText + '</div>';
+            } else { alert(msgText); }
+          } catch(e){}
+          if (btn) { btn.disabled = false; btn.textContent = 'Send request'; }
+        });
+      } catch (e) { console.warn('handout submit error', e); }
+    });
+  });
+</script>
+
+{{> footer}}{{> footer-extras }}

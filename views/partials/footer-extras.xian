@@ -1,0 +1,216 @@
+<!-- sidebar overlay (used by mobile sidebars) -->
+<div id="sidebar-overlay" class="fixed inset-0 bg-black bg-opacity-25 z-30 hidden" aria-hidden="true"></div>
+<!-- jQuery and DataTables -->
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+<script>
+  // Initialize DataTables for any table with class 'datatable'
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      if (window.jQuery && $.fn.dataTable) {
+        document.querySelectorAll('table.datatable').forEach(tbl => {
+          $(tbl).DataTable();
+        });
+      }
+    } catch (e) {
+      console.warn('DataTables init error', e);
+    }
+  });
+</script>
+<script>
+  // Clone desktop sidebar links into mobile bottom nav (if bottom nav is empty)
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      document.querySelectorAll('#site-bottom-nav').forEach(function(nav){
+        const inner = nav.querySelector('div') || nav;
+        // if nothing pre-rendered in bottom nav, clone from the canonical sidebar-links
+        if (inner && inner.children.length === 0) {
+          // pick the first visible sidebar-links list
+          const links = document.querySelectorAll('.sidebar-links a');
+          links.forEach(function(a){
+            try {
+              const c = a.cloneNode(true);
+              // simplify styling for bottom nav
+              c.classList.remove('sidebar-link');
+              c.classList.add('block', 'text-center', 'text-xs', 'px-2');
+              const wrap = document.createElement('div');
+              wrap.className = 'flex-1';
+              wrap.appendChild(c);
+              inner.appendChild(wrap);
+            } catch (e) { /* ignore clone errors per link */ }
+          });
+        }
+      });
+    } catch (e) { console.warn('bottom nav clone error', e); }
+  });
+</script>
+<script>
+  // Global UI helpers: apply saved theme, confirm logout, and show simple toasts for flash messages
+  document.addEventListener('DOMContentLoaded', function() {
+    try {
+      // Apply saved theme globally
+      const saved = localStorage.getItem('siteTheme');
+      if (saved === 'dark') document.body.classList.add('dark');
+
+      // Attach logout confirmation
+      document.querySelectorAll('a[href="/logout"]').forEach(a => {
+        a.addEventListener('click', function(e) {
+          const ok = confirm('Are you sure you want to log out?');
+          if (!ok) e.preventDefault();
+        });
+      });
+
+      // Simple toast for flash messages (if server rendered them into res.locals)
+      const success = document.querySelector('.flash-success');
+      const error = document.querySelector('.flash-error');
+      if (success) {
+        // show briefly
+        success.style.position = 'fixed'; success.style.right = '1rem'; success.style.top = '1rem'; success.style.zIndex = 60;
+        setTimeout(() => { try { success.style.display = 'none'; } catch (e){} }, 4000);
+      }
+      if (error) {
+        error.style.position = 'fixed'; error.style.right = '1rem'; error.style.top = '1rem'; error.style.zIndex = 60;
+        setTimeout(() => { try { error.style.display = 'none'; } catch (e){} }, 6000);
+      }
+    } catch (e) { console.warn('global footer helpers error', e); }
+  });
+</script>
+  <script>
+    // Poll staff notification counts every 30 seconds and update staff badge
+    document.addEventListener('DOMContentLoaded', function() {
+      try {
+        const badge = document.getElementById('staff-notif-badge');
+        const update = () => {
+          fetch('/api/staff/notification-counts', { credentials: 'same-origin' }).then(r => {
+            if (!r.ok) throw new Error('no auth');
+            return r.json();
+          }).then(data => {
+            const total = (data && data.total) ? data.total : 0;
+            if (badge) {
+              if (total > 0) { badge.textContent = String(total); badge.classList.remove('hidden'); }
+              else { badge.classList.add('hidden'); }
+            }
+          }).catch(()=>{});
+        };
+        update();
+        setInterval(update, 30000);
+      } catch (e) { console.warn('staff notif poll error', e); }
+    });
+  </script>
+<script>
+  // Sidebar toggle and active link highlighting
+  document.addEventListener('DOMContentLoaded', function() {
+  const toggle = document.getElementById('sidebar-toggle');
+  const sidebar = document.getElementById('site-sidebar');
+  const overlay = document.getElementById('sidebar-overlay');
+  // collapseBtn kept for backward compatibility if present
+  const collapseBtn = document.getElementById('sidebar-collapse');
+
+    function openSidebar() {
+      if (!sidebar) return;
+      sidebar.classList.remove('-translate-x-full');
+      sidebar.classList.add('translate-x-0');
+      if (overlay) overlay.classList.remove('hidden');
+      document.body.classList.add('overflow-hidden');
+    }
+
+    function closeSidebar() {
+      if (!sidebar) return;
+      sidebar.classList.remove('translate-x-0');
+      sidebar.classList.add('-translate-x-full');
+      if (overlay) overlay.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+    }
+
+    // Unified toggle: on mobile open/close overlay sidebar; on desktop toggle collapsed state
+    if (toggle) {
+      toggle.addEventListener('click', function(e) {
+        if (!sidebar) return;
+        try {
+          const isDesktop = window.innerWidth >= 768;
+          if (isDesktop) {
+            // act as collapse/expand on desktop
+            const isCollapsed = sidebar.classList.contains('collapsed');
+            setCollapsedState(!isCollapsed);
+          } else {
+            // act as mobile open/close
+            if (sidebar.classList.contains('-translate-x-full')) openSidebar(); else closeSidebar();
+          }
+        } catch (e) { console.warn('sidebar-toggle handler error', e); }
+      });
+    }
+
+    if (overlay) {
+      overlay.addEventListener('click', closeSidebar);
+    }
+
+    // Desktop collapse behaviour (reduces sidebar width)
+    function setCollapsedState(collapsed) {
+      try {
+        if (!sidebar) return;
+        if (collapsed) {
+          sidebar.classList.add('collapsed');
+          document.body.classList.add('sidebar-collapsed');
+        } else {
+          sidebar.classList.remove('collapsed');
+          document.body.classList.remove('sidebar-collapsed');
+        }
+        // also toggle main-shift if present
+        document.querySelectorAll('.main-shift').forEach(m => {
+          if (collapsed) m.classList.add('collapsed'); else m.classList.remove('collapsed');
+        });
+        // As a defensive visual fallback, set an inline width on desktop so
+        // CSS specificity issues don't prevent the sidebar from shrinking.
+        try {
+          const docStyle = getComputedStyle(document.documentElement);
+          const cW = docStyle.getPropertyValue('--sidebar-collapsed-width').trim() || '4rem';
+          const eW = docStyle.getPropertyValue('--sidebar-width').trim() || '16rem';
+          if (window.innerWidth >= 768) {
+            sidebar.style.width = collapsed ? cW : eW;
+          } else {
+            // clear inline width on mobile (overlay mode)
+            sidebar.style.width = '';
+          }
+        } catch (e) { /* ignore */ }
+
+        localStorage.setItem('sidebarCollapsed', collapsed ? '1' : '0');
+      } catch (e) { console.warn('setCollapsedState error', e); }
+    }
+
+    // If an old collapse button exists, wire it to the same setCollapsedState for compatibility
+    if (collapseBtn) {
+      collapseBtn.addEventListener('click', function() {
+        const isCollapsed = sidebar && sidebar.classList.contains('collapsed');
+        setCollapsedState(!isCollapsed);
+      });
+    }
+
+    // Restore previous collapsed state
+    try {
+      const saved = localStorage.getItem('sidebarCollapsed');
+      if (saved === '1') setCollapsedState(true);
+    } catch (e) {}
+
+    // Highlight active link in any sidebar or bottom nav present
+    try {
+      const path = window.location.pathname.replace(/\/$/, ''); // remove trailing slash
+      const markLink = (a) => {
+        const href = a.getAttribute('href') || '';
+        const cleanHref = href.replace(/\/$/, '');
+        if (cleanHref === '') return; // ignore empty anchors
+        if (path === cleanHref || path.startsWith(cleanHref + '/')) {
+          a.classList.add('text-teal-700', 'font-semibold');
+          a.classList.remove('text-gray-700');
+        } else {
+          a.classList.remove('text-teal-700', 'font-semibold');
+        }
+      };
+      document.querySelectorAll('#site-sidebar a').forEach(markLink);
+      document.querySelectorAll('#site-bottom-nav a').forEach(markLink);
+    } catch (e) {
+      console.warn('Sidebar highlight error', e);
+    }
+  });
+</script>
+</body>
+</html>

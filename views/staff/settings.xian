@@ -1,0 +1,15 @@
+{{> head}}
+{{> sidebar-staff}}
+
+<main class="main-shift">
+  <div class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Settings</h1>
+    <p class="text-sm text-gray-600 mb-4">Staff settings (placeholder).</p>
+
+    <div class="bg-white rounded shadow p-4">
+      <p>Notification preferences and account settings will be available here.</p>
+    </div>
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

@@ -1,0 +1,149 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+  {{> sidebar-admin }}
+  <main class="main-shift flex-1 bg-white p-6 rounded border">
+        <h1 class="text-2xl font-bold">Manage Users</h1>
+        <p class="mt-2">List of registered users.</p>
+
+        <div class="mt-4 bg-white rounded shadow">
+          <table class="w-full datatable" id="users-table">
+            <thead>
+              <tr>
+                <th class="border p-2">Name</th>
+                <th class="border p-2">Email</th>
+                <th class="border p-2">Role</th>
+                <th class="border p-2">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each users}}
+              <tr data-id="{{this.id}}" data-name="{{this.name}}" data-email="{{this.email}}" data-role="{{this.role}}">
+                <td class="border p-2">{{this.name}}</td>
+                <td class="border p-2">{{this.email}}</td>
+                <td class="border p-2">{{this.role}}</td>
+                <td class="border p-2">
+                  <button type="button" class="view-user-btn text-gray-700 bg-gray-100 px-3 py-1 rounded mr-2" data-id="{{this.id}}">View</button>
+                  <button type="button" class="edit-user-btn text-white bg-blue-600 px-3 py-1 rounded mr-2" data-id="{{this.id}}">Edit</button>
+                  <button type="button" class="delete-user-btn text-white bg-red-600 px-3 py-1 rounded" data-id="{{this.id}}">Delete</button>
+                </td>
+              </tr>
+              {{/each}}
+            </tbody>  
+          </table>
+        </div>
+        <!-- Modals -->
+
+        <!-- View Modal -->
+        <div id="view-user-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded shadow-lg w-11/12 md:w-1/2 p-6">
+            <h2 class="text-lg font-bold mb-4">User Details</h2>
+            <div class="mb-4">
+              <strong>Name:</strong> <span id="view-name"></span>
+            </div>
+            <div class="mb-4">
+              <strong>Email:</strong> <span id="view-email"></span>
+            </div>
+            <div class="mb-4">
+              <strong>Role:</strong> <span id="view-role"></span>
+            </div>
+            <div class="text-right">
+              <button id="view-close" class="px-4 py-2 bg-gray-200 rounded">Close</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Edit Modal -->
+        <div id="edit-user-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded shadow-lg w-11/12 md:w-1/2 p-6">
+            <h2 class="text-lg font-bold mb-4">Edit User Role</h2>
+            <form id="edit-user-form" method="POST">
+              <div class="mb-3">
+                <label class="block text-sm font-medium">Role</label>
+                <select name="role" id="edit-role" class="w-full border p-2 rounded">
+                  <option value="admin">admin</option>
+                  <option value="staff">staff</option>
+                  <option value="user">user</option>
+                </select>
+              </div>
+              <div class="flex justify-end gap-2">
+                <button type="button" id="edit-cancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Save</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Delete Modal -->
+        <div id="delete-user-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div class="bg-white rounded shadow-lg w-11/12 md:w-1/3 p-6">
+            <h2 class="text-lg font-bold mb-4">Confirm Delete</h2>
+            <p class="mb-4">Are you sure you want to delete <strong id="delete-name"></strong>?</p>
+            <form id="delete-user-form" method="POST">
+              <div class="flex justify-end gap-2">
+                <button type="button" id="delete-cancel" class="px-4 py-2 bg-gray-200 rounded">Cancel</button>
+                <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">Delete</button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <script>
+          (function(){
+            // Helpers
+            const qs = (s, ctx=document) => ctx.querySelector(s);
+            const qsa = (s, ctx=document) => Array.from(ctx.querySelectorAll(s));
+
+            // Open view modal
+            qsa('.view-user-btn').forEach(btn => btn.addEventListener('click', e => {
+              const tr = e.target.closest('tr');
+              const id = tr.dataset.id; const name = tr.dataset.name; const email = tr.dataset.email; const role = tr.dataset.role;
+              qs('#view-name').textContent = name || '';
+              qs('#view-email').textContent = email || '';
+              qs('#view-role').textContent = role || '';
+              qs('#view-user-modal').classList.remove('hidden');
+            }));
+            qs('#view-close').addEventListener('click', ()=> qs('#view-user-modal').classList.add('hidden'));
+
+            // Edit
+            qsa('.edit-user-btn').forEach(btn => btn.addEventListener('click', e => {
+              const tr = e.target.closest('tr');
+              const id = tr.dataset.id; const role = tr.dataset.role;
+              const form = qs('#edit-user-form');
+              form.action = '/admin/users/' + id + '/edit';
+              qs('#edit-role').value = role || 'user';
+              qs('#edit-user-modal').classList.remove('hidden');
+            }));
+            qs('#edit-cancel').addEventListener('click', ()=> qs('#edit-user-modal').classList.add('hidden'));
+
+            // Delete
+            qsa('.delete-user-btn').forEach(btn => btn.addEventListener('click', e => {
+              const tr = e.target.closest('tr');
+              const id = tr.dataset.id; const name = tr.dataset.name;
+              const form = qs('#delete-user-form');
+              form.action = '/admin/users/' + id + '/delete';
+              qs('#delete-name').textContent = name || '';
+              qs('#delete-user-modal').classList.remove('hidden');
+            }));
+            qs('#delete-cancel').addEventListener('click', ()=> qs('#delete-user-modal').classList.add('hidden'));
+
+            // Close modals on ESC
+            document.addEventListener('keydown', (e)=>{
+              if(e.key === 'Escape'){
+                qsa('#view-user-modal, #edit-user-modal, #delete-user-modal').forEach(m => m.classList.add('hidden'));
+              }
+            });
+
+            // Click outside to close
+            qsa('#view-user-modal, #edit-user-modal, #delete-user-modal').forEach(modal => {
+              modal.addEventListener('click', (ev)=>{
+                if(ev.target === modal) modal.classList.add('hidden');
+              });
+            });
+          })();
+        </script>
+      </main>
+    </div>
+  </div>
+{{> footer }}{{> footer-extras }}

@@ -1,0 +1,45 @@
+{{> head}}
+{{>sidebar-user}}
+<main class="main-shift">
+  <div class="p-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">My Prescriptions & Medicines</h1>
+    <p class="text-sm text-gray-600 mb-4">Below are medicines and handouts issued to you. If you need medicine not yet handed out, request it.</p>
+
+  <div class="mb-4">
+    <a href="/handouts/new" class="bg-green-600 text-white px-4 py-2 rounded">Request Medicine</a>
+    <a href="/user/dashboard" class="ml-2 text-gray-600">Back to dashboard</a>
+  </div>
+
+  {{#if handouts.length}}
+  <div class="bg-white rounded shadow overflow-hidden">
+    <table class="w-full table-auto border-collapse">
+      <thead class="bg-gray-50">
+        <tr>
+          <th class="text-left p-2">Date</th>
+          <th class="text-left p-2">Medicine</th>
+          <th class="text-left p-2">Quantity</th>
+          <th class="text-left p-2">Notes</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each handouts}}
+        <tr class="border-t">
+          <td class="p-2 text-sm text-gray-600">{{this.createdAt}}</td>
+          <td class="p-2">{{#if this.Medicine}}{{this.Medicine.name}}{{else}}(deleted){{/if}}</td>
+          <td class="p-2">{{this.quantity}}</td>
+          <td class="p-2 text-sm text-gray-700">{{this.notes}}</td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+  {{else}}
+  <div class="bg-white p-6 rounded shadow">
+    <p class="text-gray-600">You have no prescriptions or handouts yet. <a href="/handouts/new" class="text-green-600">Request medicine</a>.</p>
+  </div>
+  {{/if}}
+
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

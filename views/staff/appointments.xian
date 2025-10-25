@@ -1,0 +1,154 @@
+{{> head }}
+  {{> navbar }}
+
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold">Appointments</h1>
+    <p class="mt-2">All appointments</p>
+    <div class="mt-4 bg-white rounded shadow">
+      <table class="w-full datatable">
+        <thead>
+          <tr>
+            <th class="border p-2">Date</th>
+            <th class="border p-2">Time</th>
+            <th class="border p-2">Patient</th>
+            <th class="border p-2">Type</th>
+            <th class="border p-2">Status</th>
+            <th class="border p-2">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{#each appts}}
+          <tr data-id="{{this.id}}" data-date="{{this.date}}" data-time="{{this.time}}" data-type="{{this.type}}" data-status="{{this.status}}" data-notes="{{this.notes}}" data-patient="{{#if this.User}}{{this.User.name}}{{/if}}" data-user-email="{{#if this.User}}{{this.User.email}}{{/if}}" data-user-phone="{{#if this.User}}{{this.User.phone}}{{/if}}">
+            <td class="border p-2">{{this.date}}</td>
+            <td class="border p-2">{{this.time}}</td>
+            <td class="border p-2">{{#if this.User}}{{this.User.name}}{{else}}-{{/if}}</td>
+            <td class="border p-2">{{this.type}}</td>
+            <td class="border p-2">{{this.status}}</td>
+            <td class="border p-2">
+              <button type="button" class="view-appt text-sm text-blue-600 mr-2">View</button>
+              {{#if this.isPending}}
+                <form method="post" action="/staff/appointments/{{this.id}}/confirm" style="display:inline">
+                  <button type="submit" class="text-sm text-green-600 mr-2">Confirm</button>
+                </form>
+                <form method="post" action="/staff/appointments/{{this.id}}/cancel" style="display:inline">
+                  <button type="submit" class="text-sm text-red-600">Cancel</button>
+                </form>
+              {{else}}
+                <span class="text-xs text-gray-500">No actions</span>
+              {{/if}}
+            </td>
+          </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <!-- Modal: Appointment View (client-side, populated from row data) -->
+  <div id="appt-modal" class="fixed inset-0 z-50 hidden items-center justify-center">
+    <div class="absolute inset-0 bg-black opacity-50"></div>
+    <div class="bg-white rounded shadow-lg z-60 w-11/12 md:w-2/3 lg:w-1/2 p-6 relative">
+      <button id="appt-modal-close" class="absolute top-3 right-3 text-gray-600">✕</button>
+      <h2 class="text-xl font-semibold mb-4">Appointment Details</h2>
+      <div class="space-y-2">
+        <div><strong>Date:</strong> <span id="appt-date">-</span></div>
+        <div><strong>Time:</strong> <span id="appt-time">-</span></div>
+        <div><strong>Patient:</strong> <span id="appt-patient">-</span></div>
+        <div><strong>Contact:</strong> <span id="appt-contact">-</span></div>
+        <div><strong>Type:</strong> <span id="appt-type">-</span></div>
+        <div><strong>Status:</strong> <span id="appt-status">-</span></div>
+        <div><strong>Notes:</strong>
+          <div id="appt-notes" class="whitespace-pre-wrap mt-2 p-2 bg-gray-50 rounded border text-sm text-gray-700">-</div>
+        </div>
+      </div>
+      <div class="mt-6 flex justify-end space-x-3">
+        <form id="appt-confirm-form" method="post" action="" style="display:inline">
+          <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Confirm</button>
+        </form>
+        <form id="appt-cancel-form" method="post" action="" style="display:inline">
+          <button type="submit" class="px-4 py-2 bg-red-600 text-white rounded">Cancel</button>
+        </form>
+        <button id="appt-close-btn" class="px-4 py-2 bg-gray-300 rounded">Close</button>
+      </div>
+    </div>
+  </div>
+    <script>
+      (function() {
+        function qs(sel, root){ return (root||document).querySelector(sel); }
+        function qsa(sel, root){ return Array.from((root||document).querySelectorAll(sel)); }
+
+        document.addEventListener('DOMContentLoaded', function(){
+          const modal = qs('#appt-modal');
+          const closeBtn = qs('#appt-modal-close');
+          const closeBtn2 = qs('#appt-close-btn');
+          const confirmForm = qs('#appt-confirm-form');
+          const cancelForm = qs('#appt-cancel-form');
+
+          function openModalForRow(row){
+            try{
+              const id = row.dataset.id || '';
+              const date = row.dataset.date || '-';
+              const time = row.dataset.time || '-';
+              const type = row.dataset.type || '-';
+              const status = row.dataset.status || '-';
+              const notes = row.dataset.notes || '';
+              const patient = row.dataset.patient || '-';
+              const email = row.dataset.userEmail || '';
+              const phone = row.dataset.userPhone || '';
+
+              qs('#appt-date').textContent = date;
+              qs('#appt-time').textContent = time || '-';
+              qs('#appt-type').textContent = type || '-';
+              qs('#appt-status').textContent = status || '-';
+              qs('#appt-patient').textContent = patient || '-';
+              const contact = [email, phone].filter(Boolean).join(' / ');
+              qs('#appt-contact').textContent = contact || '-';
+              qs('#appt-notes').textContent = notes || '-';
+
+              // set form actions
+              confirmForm.action = '/staff/appointments/' + id + '/confirm';
+              cancelForm.action = '/staff/appointments/' + id + '/cancel';
+
+              // show/hide confirm/cancel depending on status
+              if (String(status).toLowerCase() !== 'pending'){
+                confirmForm.style.display = 'none';
+                cancelForm.style.display = 'none';
+              } else {
+                confirmForm.style.display = '';
+                cancelForm.style.display = '';
+              }
+
+              // show modal
+              modal.classList.remove('hidden');
+              modal.classList.add('flex');
+            } catch (e){ console.warn('openModalForRow error', e); }
+          }
+
+          function closeModal(){
+            if (!modal) return;
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+          }
+
+          // wire view buttons
+          qsa('.view-appt').forEach(btn => {
+            btn.addEventListener('click', function(e){
+              const tr = btn.closest('tr');
+              if (!tr) return;
+              openModalForRow(tr);
+            });
+          });
+
+          // close handlers
+          if (closeBtn) closeBtn.addEventListener('click', closeModal);
+          if (closeBtn2) closeBtn2.addEventListener('click', closeModal);
+          if (modal) {
+            modal.addEventListener('click', function(e){
+              // click on backdrop (the modal container itself) closes
+              if (e.target === modal) closeModal();
+            });
+          }
+        });
+      })();
+    </script>
+{{> footer }}{{> footer-extras }}

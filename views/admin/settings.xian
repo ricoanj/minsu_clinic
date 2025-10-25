@@ -1,0 +1,53 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+  {{> sidebar-admin }}
+  <main class="main-shift flex-1 bg-white p-6 rounded border">
+        <h1 class="text-2xl font-bold">Site Settings</h1>
+        <p class="mt-2">Update site-wide settings below. Changes will apply to public pages and notifications.</p>
+
+        <form method="POST" action="/admin/settings/save" class="mt-4 space-y-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Site Title</label>
+            <input name="siteTitle" value="{{settings.siteTitle}}" class="mt-1 block w-full rounded border p-2" />
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700">Contact Email</label>
+            <input name="contactEmail" value="{{settings.contactEmail}}" class="mt-1 block w-full rounded border p-2" />
+          </div>
+          <div class="flex items-center gap-3">
+            <button class="px-4 py-2 bg-green-600 text-white rounded">Save Settings</button>
+            <button type="button" id="toggle-theme" class="px-4 py-2 border rounded">Toggle Dark/Light</button>
+            <a href="/logout" class="px-4 py-2 border text-red-600 rounded">Logout</a>
+          </div>
+        </form>
+        <script>
+          (function(){
+            function applyTheme(theme) {
+              try {
+                if (theme === 'dark') document.body.classList.add('dark'); else document.body.classList.remove('dark');
+                localStorage.setItem('siteTheme', theme);
+              } catch(e){}
+            }
+            document.addEventListener('DOMContentLoaded', function(){
+              const btn = document.getElementById('toggle-theme');
+              // initialize from localStorage
+              const saved = localStorage.getItem('siteTheme') || 'light';
+              applyTheme(saved);
+              if (btn) btn.addEventListener('click', function(){
+                const cur = document.body.classList.contains('dark') ? 'dark' : 'light';
+                const next = cur === 'dark' ? 'light' : 'dark';
+                applyTheme(next);
+                // give simple feedback
+                btn.textContent = next === 'dark' ? 'Switch to Light' : 'Switch to Dark';
+              });
+              // set initial button text
+              if (btn) btn.textContent = document.body.classList.contains('dark') ? 'Switch to Light' : 'Switch to Dark';
+            });
+          })();
+        </script>
+      </main>
+    </div>
+  </div>
+{{> footer }}{{> footer-extras }}

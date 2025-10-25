@@ -1,0 +1,46 @@
+{{> head}}
+
+{{>sidebar-user}}
+<main class="main-shift">
+  <div class="p-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Notifications</h1>
+    <p class="text-sm text-gray-600 mb-4">Recent messages and audit notifications related to your account.</p>
+  {{#if notifications.length}}
+  <div class="bg-white rounded shadow overflow-hidden">
+    <ul class="divide-y">
+      {{#each notifications}}
+      <li class="p-4 flex justify-between items-start">
+        <div class="flex-1">
+          <div class="text-sm text-gray-500">{{this.createdAt}} • {{#if this.actor}}{{this.actor.name}}{{else}}System{{/if}}</div>
+          <div class="font-medium text-gray-800">{{this.title}}</div>
+          <div class="text-sm text-gray-700 mt-1">{{this.message}}</div>
+          {{#if this.detailsStr}}
+          <pre class="mt-2 text-xs bg-gray-50 p-2 rounded text-gray-600">{{this.detailsStr}}</pre>
+          {{/if}}
+        </div>
+        <div class="ml-4 text-right space-y-2">
+          {{#if this.read}}
+            <div class="text-xs text-green-600">Read</div>
+          {{else}}
+            <form method="post" action="/user/notifications/{{this.id}}/mark-read">
+              <button type="submit" class="text-sm text-blue-600">Mark read</button>
+            </form>
+          {{/if}}
+          <form method="post" action="/user/notifications/{{this.id}}/delete" onsubmit="return confirm('Delete this notification?');">
+            <button type="submit" class="text-sm text-red-600">Delete</button>
+          </form>
+        </div>
+      </li>
+      {{/each}}
+    </ul>
+  </div>
+  {{else}}
+  <div class="bg-white p-6 rounded shadow">
+    <p class="text-gray-600">You have no notifications.</p>
+  </div>
+  {{/if}}
+
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

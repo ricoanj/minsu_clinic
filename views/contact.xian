@@ -1,0 +1,14 @@
+{{> head }}
+<body class="bg-gray-50 min-h-screen">
+
+  {{> sidebar-public }}
+
+  <main class="md:ml-64 container mx-auto px-4 py-12">
+    <h1 class="text-2xl font-bold">Contact Us</h1>
+    <p class="mt-4 text-gray-700">For inquiries, please email <a href="mailto:mbcclinic@minsu.edu.ph" class="text-teal-600">mbcclinic@minsu.edu.ph</a> or call <strong>(043) 123-4567</strong>.</p>
+    <div class="mt-6">
+      <a href="/" class="text-gray-600">Back to Home</a>
+    </div>
+  </main>
+
+  {{> footer }}{{> footer-extras }}

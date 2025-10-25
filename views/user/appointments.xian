@@ -1,0 +1,37 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+  {{> navbar }}
+  <main class="main-shift flex-1 bg-white p-6 rounded border">
+        <h1 class="text-2xl font-bold">My Appointments</h1>
+        <p class="mt-2 text-gray-600">List of your appointments and status.</p>
+
+        <div class="mt-4">
+          <table class="w-full datatable">
+            <thead>
+              <tr>
+                <th class="border p-2">Date</th>
+                <th class="border p-2">Time</th>
+                <th class="border p-2">Type</th>
+                <th class="border p-2">Status</th>
+                <th class="border p-2">Notes</th>
+              </tr>
+            </thead>
+            <tbody>
+              {{#each appointments}}
+              <tr>
+                <td class="border p-2">{{this.date}}</td>
+                <td class="border p-2">{{this.time}}</td>
+                <td class="border p-2">{{this.type}}</td>
+                <td class="border p-2">{{this.status}}</td>
+                <td class="border p-2">{{this.notes}}</td>
+              </tr>
+              {{/each}}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  </div>
+{{> footer }}{{> footer-extras }}

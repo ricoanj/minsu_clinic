@@ -1,0 +1,30 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+  {{> sidebar-admin }}
+  <main class="main-shift flex-1">
+        <h1 class="text-2xl font-bold">Reports</h1>
+        <p class="mt-2">Overview statistics</p>
+        <div class="grid md:grid-cols-4 gap-4 mt-6">
+          <div class="bg-white p-4 rounded shadow">
+            <h4 class="font-semibold">Users</h4>
+            <div class="text-2xl mt-2">{{#if stats}}{{stats.userCount}}{{else}}-{{/if}}</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h4 class="font-semibold">Medicines</h4>
+            <div class="text-2xl mt-2">{{#if stats}}{{stats.medCount}}{{else}}-{{/if}}</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h4 class="font-semibold">Handouts</h4>
+            <div class="text-2xl mt-2">{{#if stats}}{{stats.handoutCount}}{{else}}-{{/if}}</div>
+          </div>
+          <div class="bg-white p-4 rounded shadow">
+            <h4 class="font-semibold">Appointments</h4>
+            <div class="text-2xl mt-2">{{#if stats}}{{stats.apptCount}}{{else}}-{{/if}}</div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+{{> footer }}{{> footer-extras }}

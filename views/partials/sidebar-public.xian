@@ -1,0 +1,35 @@
+
+  <!-- Desktop / tablet: top horizontal bar. Mobile: hidden (we render a bottom bar for small screens). -->
+  <nav class="hidden md:block bg-gradient-to-r from-green-800 to-green-600 text-white shadow-lg sticky top-0 z-50" aria-label="Top public navigation">
+    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-16">
+        <div class="flex items-center gap-4">
+          <a href="/" class="text-xl font-bold">MinSU Clinic</a>
+          <p class="text-green-200 text-xs hidden lg:block">Student Health Services</p>
+        </div>
+
+        <div class="flex items-center gap-6">
+          <div class="flex items-center space-x-1">
+            <a href="/" class="sidebar-link text-white/90">Home</a>
+            <a href="/about" class="sidebar-link text-white/90">About</a>
+            <a href="/services" class="sidebar-link text-white/90">Services</a>
+            <a href="/contact" class="sidebar-link text-white/90">Contact</a>
+          </div>
+          <div class="flex items-center gap-3">
+            <a href="/login" class="px-3 py-1 rounded-md bg-white text-green-700 font-semibold">Login</a>
+            <a href="/register" class="px-3 py-1 rounded-md border border-white/30 text-white">Register</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Mobile: fixed bottom bar (compact) -->
+  <nav class="fixed bottom-0 left-0 right-0 md:hidden z-50 bg-gradient-to-b from-green-800 to-green-600 text-white p-1" aria-label="Mobile public navigation">
+    <div class="flex items-center justify-between max-w-4xl mx-auto px-2">
+      <a href="/" class="flex-1 text-center py-2 sidebar-link">Home</a>
+      <a href="/services" class="flex-1 text-center py-2 sidebar-link">Services</a>
+      <a href="/login" class="flex-1 text-center py-2 sidebar-link">Login</a>
+      <a href="/register" class="flex-1 text-center py-2 sidebar-link">Register</a>
+    </div>
+  </nav>

@@ -1,0 +1,29 @@
+<aside id="site-sidebar" class="site-sidebar fixed inset-y-0 left-0 z-40 w-64 bg-white border-r p-4 transform -translate-x-full transition-transform duration-200 md:translate-x-0 md:block" aria-label="User sidebar">
+  <div class="flex items-center justify-between mb-3">
+    <h3 class="font-semibold">User Menu</h3>
+    <button id="sidebar-collapse" class="hidden md:inline p-1 rounded hover:bg-gray-100 text-sm" aria-label="Collapse sidebar">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 12H6"/></svg>
+    </button>
+  </div>
+  <nav class="mb-4">
+    <ul class="sidebar-links space-y-2 text-sm">
+      <li><a href="/user/dashboard" class="sidebar-link">Overview</a></li>
+      <li><a href="/user/appointments" class="sidebar-link">My Appointments</a></li>
+      <li><a href="/user/profile" class="sidebar-link">Profile</a></li>
+      <li><a href="/user/handouts" class="sidebar-link">Prescriptions</a></li>
+      <li>
+        <a href="/user/notifications" class="sidebar-link" id="user-notifications-link">
+          Notifications
+          <span id="user-notif-badge" class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-red-600 text-white rounded hidden">0</span>
+        </a>
+      </li>
+      <li><a href="/user/settings" class="sidebar-link">Settings</a></li>
+      <li><a href="/logout" class="sidebar-link text-red-600">Sign Out</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Mobile bottom nav: visible on small screens, hidden on md+ -->
+<nav id="site-bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-2 md:hidden" aria-label="User quick nav">
+  <div class="max-w-screen-xl mx-auto flex justify-around items-center"></div>
+</nav>

@@ -1,0 +1,42 @@
+{{> head}}
+{{> navbar }}
+
+<main class="main-shift">
+  <div class="p-6 max-w-4xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Staff Notifications</h1>
+    <p class="text-sm text-gray-600 mb-4">Requests and alerts relevant to staff.</p>
+
+  {{#if notifications.length}}
+  <ul class="bg-white rounded shadow divide-y">
+    {{#each notifications}}
+    <li class="p-4 flex justify-between">
+      <div>
+        <div class="text-sm text-gray-500">{{this.createdAt}} • {{#if this.actor}}{{this.actor.name}}{{else}}System{{/if}}</div>
+        <div class="font-medium text-gray-800">{{this.title}}</div>
+        <div class="text-sm text-gray-700 mt-1">{{this.message}}</div>
+        {{#if this.detailsStr}}
+        <pre class="mt-2 text-xs bg-gray-50 p-2 rounded text-gray-600">{{this.detailsStr}}</pre>
+        {{/if}}
+      </div>
+      <div class="ml-4 text-right">
+        <!-- For requests we may want quick actions -->
+        {{#if this.isHandoutRequest}}
+          <a href="/inventory/handouts" class="text-sm text-green-600">Process</a>
+        {{/if}}
+        {{#if this.isAppointmentRequest}}
+          <!-- action buttons handled in appointments list instead -->
+          <span class="text-xs text-gray-500">See appointments</span>
+        {{/if}}
+      </div>
+    </li>
+    {{/each}}
+  </ul>
+  {{else}}
+  <div class="bg-white p-6 rounded shadow">
+    <p class="text-gray-600">No notifications at the moment.</p>
+  </div>
+    {{/if}}
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

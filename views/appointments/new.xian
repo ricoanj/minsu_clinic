@@ -1,0 +1,39 @@
+{{> head}}
+{{> sidebar-user}}
+<main class="main-shift">
+  <div class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Book an appointment</h1>
+    <p class="text-sm text-gray-600 mb-4">Fill in the details below and submit. Staff will confirm the appointment.</p>
+
+    <form action="/appointments/new" method="post" class="space-y-4 bg-white p-4 rounded shadow">
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Date</label>
+      <input type="date" name="date" required min="{{minDate}}" class="mt-1 block w-full border-gray-200 rounded p-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Time (optional)</label>
+      <input type="time" name="time" class="mt-1 block w-full border-gray-200 rounded p-2" />
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Type</label>
+      <select name="type" class="mt-1 block w-full border-gray-200 rounded p-2">
+        <option>Consultation</option>
+        <option>Follow-up</option>
+        <option>Vaccination</option>
+        <option>Screening</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-sm font-medium text-gray-700">Notes (optional)</label>
+      <textarea name="notes" rows="4" class="mt-1 block w-full border-gray-200 rounded p-2"></textarea>
+    </div>
+
+    <div class="flex items-center justify-between">
+      <a href="/user/appointments" class="text-sm text-gray-600">Back to my appointments</a>
+      <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">Request appointment</button>
+    </div>
+    </form>
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

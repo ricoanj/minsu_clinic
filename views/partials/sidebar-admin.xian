@@ -1,0 +1,57 @@
+<header id="site-sidebar" class="site-topbar fixed top-0 left-0 right-0 z-40 bg-white border-b p-2">
+  <div class="max-w-screen-xl mx-auto flex items-center justify-between px-4">
+    <div class="flex items-center gap-4">
+      <a href="/admin/dashboard" class="text-lg font-bold">MBC Clinic</a>
+      <span class="text-xs text-gray-500 hidden sm:inline">Admin</span>
+      <!-- main nav links (horizontal on desktop) -->
+      <nav aria-label="Admin navigation" class="ml-6">
+        <ul class="sidebar-links flex gap-4 items-center text-sm">
+          <li><a href="/admin/dashboard" class="sidebar-link">Overview</a></li>
+          <li><a href="/admin/users" class="sidebar-link">Manage Users</a></li>
+          <li class="relative">
+            <details class="group">
+              <summary class="sidebar-link cursor-pointer">Inventory</summary>
+              <ul class="absolute left-0 mt-2 bg-white border rounded shadow py-2 px-3 space-y-1">
+                <li><a href="/admin/inventory/medicines" class="sidebar-link">Medicines</a></li>
+                <li><a href="/inventory/handouts" class="sidebar-link">Handouts</a></li>
+              </ul>
+            </details>
+          </li>
+          <li><a href="/appointments" class="sidebar-link">Appointments</a></li>
+          <li><a href="/admin/reports" class="sidebar-link">Reports</a></li>
+          <li><a href="/admin/settings" class="sidebar-link">Site Settings</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="flex items-center gap-3">
+      <a href="/admin/notifications" class="relative inline-flex p-2 rounded hover:bg-gray-100" aria-label="Notifications">
+        <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+        {{#if notifCount}}
+        <span id="notif-count" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-semibold leading-none text-white bg-red-600 rounded-full">{{notifCount}}</span>
+        {{/if}}
+      </a>
+      <a href="/admin/profile" class="inline-flex items-center gap-2 p-1 rounded hover:bg-gray-100" aria-label="Profile">
+        <img src="{{#if user}}{{user.avatarUrl}}{{else}}/images/avatar-placeholder.png{{/if}}" alt="Profile" class="w-8 h-8 rounded-full object-cover" />
+        {{#if user}}<span class="hidden sm:inline text-sm text-gray-700">{{user.name}}</span>{{/if}}
+      </a>
+      <a href="/logout" class="text-red-600 hidden sm:inline">Sign out</a>
+    </div>
+  </div>
+</header>
+
+<!-- spacer so page content isn't hidden under fixed topbar -->
+<div class="h-16"></div>
+
+<!-- Mobile bottom nav remains for small screens -->
+<nav id="site-bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-2 md:hidden" aria-label="Admin quick nav">
+  <div class="max-w-screen-xl mx-auto flex justify-between items-center px-4">
+    <a href="/admin/dashboard" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12h18M3 6h18M3 18h18"/></svg><span>Home</span></a>
+    <a href="/admin/users" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM6 20v-1c0-2.21 3.58-4 6-4s6 1.79 6 4v1H6z"/></svg><span>Users</span></a>
+    <a href="/inventory/medicines" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l4 4H8l4-4zm0 4v16"/></svg><span>Stock</span></a>
+    <a href="/admin/reports" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="currentColor"><path d="M3 13h4v8H3zm6-6h4v14h-4zm6 4h4v10h-4z"/></svg><span>Reports</span></a>
+    <a href="/admin/notifications" class="flex flex-col items-center text-xs sidebar-link relative"><svg class="w-5 h-5 mb-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6 6 0 10-12 0v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg><span>Alerts</span>{{#if notifCount}}<span id="notif-count-mobile" class="absolute -top-1 text-xs -right-1 inline-flex items-center justify-center px-1.5 py-0.5 font-semibold leading-none text-white bg-red-600 rounded-full">{{notifCount}}</span>{{/if}}</a>
+    <a href="/admin/profile" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="currentColor"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zM6 20v-1c0-2.21 3.58-4 6-4s6 1.79 6 4v1H6z"/></svg><span>Me</span></a>
+    <a href="/admin/settings" class="flex flex-col items-center text-xs sidebar-link"><svg class="w-5 h-5 mb-1" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3"/></svg><span>Settings</span></a>
+  </div>
+</nav>

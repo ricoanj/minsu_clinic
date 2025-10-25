@@ -1,0 +1,33 @@
+<aside id="site-sidebar" class="site-sidebar fixed inset-y-0 left-0 z-40 w-64 bg-white border-r p-4 transform -translate-x-full transition-transform duration-200 md:translate-x-0 md:block" aria-label="Staff sidebar">
+  <div class="flex items-center justify-between mb-3">
+    <div>
+      <h3 class="font-semibold">Staff Menu</h3>
+    </div>
+    <div class="hidden md:flex items-center gap-2">
+      <a href="/staff/profile" class="inline-flex items-center gap-2 p-1 rounded hover:bg-gray-100" aria-label="Profile">
+        <img src="/images/avatar-placeholder.png" alt="Profile" class="w-7 h-7 rounded-full object-cover bg-gray-200" />
+        <span class="hidden md:inline text-sm text-gray-700">Profile</span>
+      </a>
+    </div>
+  </div>
+
+  <nav class="mb-4">
+    <ul class="sidebar-links space-y-2 text-sm">
+      <li><a href="/staff/dashboard" class="sidebar-link">Overview</a></li>
+      <li><a href="/staff/patients" class="sidebar-link">Patients</a></li>
+      <li><a href="/staff/appointments" class="sidebar-link">Appointments</a></li>
+      <li><a href="/staff/notes" class="sidebar-link">Notes</a></li>
+      <li><a href="/inventory/medicines" class="sidebar-link">Inventory</a></li>
+      <li>
+        <a href="/staff/notifications" class="sidebar-link" id="staff-notifications-link">Notifications <span id="staff-notif-badge" class="ml-2 inline-flex items-center justify-center px-2 py-0.5 text-xs font-medium bg-red-600 text-white rounded hidden">0</span></a>
+      </li>
+      <li><a href="/staff/settings" class="sidebar-link">Settings</a></li>
+      <li><a href="/logout" class="sidebar-link text-red-600">Sign Out</a></li>
+    </ul>
+  </nav>
+</aside>
+
+<!-- Mobile bottom nav: visible on small screens, hidden on md+ -->
+<nav id="site-bottom-nav" class="fixed bottom-0 left-0 right-0 z-40 bg-white border-t p-2 md:hidden" aria-label="Staff quick nav">
+  <div class="max-w-screen-xl mx-auto flex justify-around items-center"></div>
+</nav>

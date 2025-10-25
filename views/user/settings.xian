@@ -1,0 +1,50 @@
+{{> head}}
+{{> sidebar-user}}
+
+<main class="main-shift">
+  <div class="p-6 max-w-3xl mx-auto">
+    <h1 class="text-2xl font-bold mb-4">Settings</h1>
+
+    <div id="form-messages">
+      {{#if success_msg}}
+        {{#each success_msg}}
+          <div class="flash-success p-3 mb-4 rounded bg-green-50 text-green-800">{{this}}</div>
+        {{/each}}
+      {{/if}}
+      {{#if error_msg}}
+        {{#each error_msg}}
+          <div class="flash-error p-3 mb-4 rounded bg-red-50 text-red-800">{{this}}</div>
+        {{/each}}
+      {{/if}}
+    </div>
+
+    <section class="bg-white rounded shadow p-4 mb-6">
+      <h2 class="text-lg font-semibold mb-3">Change password</h2>
+      <form action="/user/settings/password" method="post" class="space-y-3">
+        <div>
+          <label class="block text-sm font-medium">Current password</label>
+          <input type="password" name="oldPassword" class="mt-1 block w-full border rounded px-3 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">New password</label>
+          <input type="password" name="newPassword" class="mt-1 block w-full border rounded px-3 py-2" required />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Confirm new password</label>
+          <input type="password" name="newPasswordConfirm" class="mt-1 block w-full border rounded px-3 py-2" required />
+        </div>
+        <div>
+          <button class="bg-teal-600 text-white px-4 py-2 rounded">Change password</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="bg-white rounded shadow p-4">
+      <h2 class="text-lg font-semibold mb-3">Notification preferences</h2>
+      <p class="text-sm text-gray-600">(Not implemented) You will be able to configure which in-app notifications you receive here.</p>
+    </section>
+
+  </div>
+</main>
+
+{{> footer}}{{> footer-extras }}

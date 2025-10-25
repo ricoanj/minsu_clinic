@@ -1,0 +1,110 @@
+{{> head }}
+<body class="bg-white">
+  <div class="container mx-auto px-4 py-8">
+    <div class="flex gap-6">
+  {{#if isStaff}}{{> sidebar-staff}}{{else}}{{> sidebar-admin}}{{/if}}
+  <main class="main-shift flex-1">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-bold">Handouts</h1>
+          <button id="btnAddHandout" class="bg-teal-600 text-white px-3 py-2 rounded">Add Handout</button>
+        </div>
+  <table class="w-full mt-4 table-auto border-collapse datatable" id="handouts-table">
+      <thead>
+        <tr>
+          <th class="border p-2">Medicine</th>
+          <th class="border p-2">Quantity</th>
+          <th class="border p-2">User</th>
+          <th class="border p-2">Notes</th>
+          <th class="border p-2">Date</th>
+          <th class="border p-2">Status</th>
+          <th class="border p-2">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each handouts}}
+        <tr>
+          <td class="border p-2">{{#if this.Medicine}}{{this.Medicine.name}}{{else}}-{{/if}}</td>
+          <td class="border p-2">{{this.quantity}}</td>
+          <td class="border p-2">{{#if this.User}}{{this.User.name}}{{else}}-{{/if}}</td>
+          <td class="border p-2">{{this.notes}}</td>
+          <td class="border p-2">{{this.createdAt}}</td>
+          <td class="border p-2">{{#if this.status}}{{this.status}}{{else}}requested{{/if}}</td>
+          <td class="border p-2">
+            {{#if ../isStaff}}
+              {{#if this.isRequested}}
+                <form action="/inventory/handouts/{{this.id}}/process" method="post" style="display:inline">
+                  <button class="bg-green-600 text-white px-2 py-1 rounded">Process</button>
+                </form>
+              {{else}}
+                <span class="text-sm text-gray-600">Processed</span>
+              {{/if}}
+            {{else}}
+              {{#if ../isAdmin}}
+                {{#if this.isRequested}}
+                  <form action="/inventory/handouts/{{this.id}}/process" method="post" style="display:inline">
+                    <button class="bg-green-600 text-white px-2 py-1 rounded">Process</button>
+                  </form>
+                {{else}}
+                  <span class="text-sm text-gray-600">Processed</span>
+                {{/if}}
+              {{else}}
+                <span class="text-sm text-gray-600">-</span>
+              {{/if}}
+            {{/if}}
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+      </main>
+    </div>
+  </div>
+
+  <!-- New Handout Modal -->
+  <div id="modalHandout" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 hidden">
+    <div class="bg-white w-full max-w-lg rounded shadow p-6">
+      <h2 class="text-xl font-semibold mb-4">New Handout</h2>
+      {{#if error}}
+        <div class="bg-red-100 text-red-700 p-3 rounded mb-4">{{error}}</div>
+      {{/if}}
+      <form action="/inventory/new" method="post" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium">Medicine</label>
+          <select name="medicineId" class="mt-1 block w-full border rounded px-3 py-2">
+            {{#each meds}}
+              <option value="{{this.id}}">{{this.name}} (stock: {{this.stock}})</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">User (optional)</label>
+          <select name="userId" class="mt-1 block w-full border rounded px-3 py-2">
+            <option value="">-- Select user --</option>
+            {{#each users}}
+              <option value="{{this.id}}">{{this.name}}</option>
+            {{/each}}
+          </select>
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Quantity</label>
+          <input name="quantity" type="number" min="1" value="1" class="mt-1 block w-full border rounded px-3 py-2" />
+        </div>
+        <div>
+          <label class="block text-sm font-medium">Notes</label>
+          <textarea name="notes" class="mt-1 block w-full border rounded px-3 py-2"></textarea>
+        </div>
+        <div class="flex justify-end">
+          <button type="button" id="handoutCancel" class="mr-3 text-gray-600">Cancel</button>
+          <button type="submit" class="bg-teal-600 text-white px-4 py-2 rounded">Create Handout</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script>
+    const btnAddHandout = document.getElementById('btnAddHandout');
+    const modalHandout = document.getElementById('modalHandout');
+    const handoutCancel = document.getElementById('handoutCancel');
+    if (btnAddHandout) btnAddHandout.addEventListener('click', () => modalHandout.classList.remove('hidden'));
+    if (handoutCancel) handoutCancel.addEventListener('click', () => modalHandout.classList.add('hidden'));
+  </script>
+{{> footer }}{{> footer-extras }}

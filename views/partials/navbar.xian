@@ -1,0 +1,33 @@
+<header class="hero-gradient text-white py-3 shadow-sm sticky top-0 z-50">
+  <div class="container mx-auto px-4 flex items-center justify-between">
+      <div class="flex items-center gap-3">
+      <!-- Hamburger for mobile sidebar -->
+      <button id="sidebar-toggle" class="md:hidden p-2 rounded bg-white/20 hover:bg-white/30" aria-label="Toggle menu">
+        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+        </svg>
+      </button>
+
+      <div>
+        <a href="/" class="text-lg md:text-xl font-bold">MBC Bongabong Campus Clinic</a>
+        <p class="text-teal-100 text-xs md:text-sm">Student health services • Consultation • Medicine dispensing</p>
+      </div>
+    </div>
+
+    <div>
+      {{#if currentUser}}
+        <div class="text-right">
+          <div class="text-sm">Hello, <strong>{{currentUser.name}}</strong></div>
+          <a href="/dashboard" class="inline-block mt-2 bg-white text-teal-700 px-3 py-1 rounded">Dashboard</a>
+        </div>
+      {{else}}
+        <div class="space-x-2">
+          <a href="/login" class="bg-white text-teal-700 px-3 py-1 rounded">Login</a>
+          <a href="/register" class="bg-teal-800/30 text-white px-3 py-1 rounded">Register</a>
+        </div>
+      {{/if}}
+    </div>
+  </div>
+</header>
+
+<!-- sidebar overlay is rendered in footer-extras -->
